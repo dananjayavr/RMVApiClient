@@ -1,6 +1,4 @@
-import de.rmv.hapirest.model.Departure;
-import de.rmv.hapirest.model.DepartureBoard;
-import de.rmv.hapirest.model.ProductType;
+import de.rmv.hapirest.model.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,6 +9,7 @@ import java.util.Properties;
 public class Main {
     // https://www.rmv.de/hapi/location.name?accessId=<access_id>&input=frankfurt%20hauptbahnhof
     public static final String API_URL = "https://www.rmv.de/hapi/departureBoard?accessId=%s&id=A=1@O=Wiesbaden%%20Loreleiring@X=8220662@Y=50077377@U=80@L=3025906@B=1@p=1689358093";
+    public static final String API_URL_FORMATTED = String.format(API_URL, loadApiKey());
     private static final String CONFIG_FILE = "config.properties";
     public static boolean useCache = true; // Set this to true to use the cached response
     public static final String CACHE_FOLDER = "cache"; // Folder to save the cached XML response
@@ -18,10 +17,7 @@ public class Main {
     public static void main(String[] args) {
         try {
 
-            String apiKey = loadApiKey();
-            String apiUrlWithAccessId = String.format(API_URL, apiKey);
-
-            String xmlResponse = useCache ? CacheManager.getCachedResponse() : RequestManager.makeApiRequest(apiUrlWithAccessId, true);
+            String xmlResponse = useCache ? CacheManager.getCachedResponse() : RequestManager.makeApiRequest(API_URL_FORMATTED, true);
 
             // Update the cache file if needed
             if (!useCache) {
@@ -32,14 +28,24 @@ public class Main {
 
             for (Departure departure : departureBoard.getDeparture()) {
                 List<ProductType> products;
-                System.out.println(departure.getDirection() + " : " + departure.getJourneyStatus() + " : " + departure.getTime());
                 products = departure.getProduct();
 
-                System.out.println("Products: " + products.size());
+                if(products.size() == 1) {
+                    for(ProductType productType : products) {
+                        String message = "%s => %s : %s : %s ";
+                        message = String.format(message,productType.getName(),departure.getDirection(),departure.getJourneyStatus(),departure.getTime());
+                        System.out.println(message);
+                    }
+                } else {
+                    String message = "%s : %s : %s ";
+                    message = String.format(message,departure.getDirection(),departure.getJourneyStatus(),departure.getTime());
+                    System.out.println(message);
 
-                for(ProductType productType : products) {
-                    System.out.println(productType.getName());
+                    for(ProductType productType : products) {
+                        System.out.println(productType.getName());
+                    }
                 }
+
 
             }
 

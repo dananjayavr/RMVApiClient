@@ -16,13 +16,13 @@ public class CacheManager {
                 if (latestCacheFile != null && !isCacheOutdated(latestCacheFile)) {
                     return XmlParser.loadXmlResponseFromFile(latestCacheFile);
                 } else {
-                    return RequestManager.makeApiRequest(Main.API_URL, true);
+                    return RequestManager.makeApiRequest(Main.API_URL_FORMATTED, true);
                 }
             }
         } else {
             cacheFolder.mkdirs();
         }
-        return RequestManager.makeApiRequest(Main.API_URL, true);
+        return RequestManager.makeApiRequest(Main.API_URL_FORMATTED, true);
     }
 
     private static boolean isCacheOutdated(@NotNull File cacheFile) {
