@@ -2,7 +2,6 @@ import de.rmv.hapirest.model.Departure;
 import de.rmv.hapirest.model.DepartureBoard;
 import de.rmv.hapirest.model.ProductType;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +62,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        return apiKey.toString();
+        return apiKey;
     }
 
 }
